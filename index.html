@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Online Quiz Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="index.css" />
+    <script type="module" src="index.tsx"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.mjs" type="module"></script>
+    <script type="importmap">
+    {
+      "imports": {
+        "@google/genai": "https://aistudiocdn.com/@google/genai@^1.17.0"
+      }
+    }
+    </script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body>
+    <main>
+        <!-- LOGIN SECTION -->
+        <section id="login-section" class="view">
+            <div class="login-container">
+                <div class="login-toggle">
+                    <button id="show-student-login" class="active">Student</button>
+                    <button id="show-professor-login">Professor</button>
+                </div>
+
+                <!-- Student Login Form -->
+                <form id="student-login-form" class="login-form">
+                    <h2>Join Quiz</h2>
+                    <input type="text" id="student-quiz-code" placeholder="6-Digit Quiz Code" required maxlength="6">
+                    <input type="text" id="student-name" placeholder="Full Name" required>
+                    <input type="text" id="student-roll" placeholder="Roll Number" required>
+                    <input type="email" id="student-email" placeholder="Email Address" required>
+                    <button type="submit">Start Quiz</button>
+                </form>
+
+                <!-- Professor Login Form -->
+                <form id="professor-login-form" class="login-form hidden">
+                    <h2>Professor Login</h2>
+                    <input type="email" id="professor-email" placeholder="Email Address" required>
+                    <input type="password" id="professor-password" placeholder="Password" required>
+                    <button type="submit">Login</button>
+                    <p class="form-text">Don't have an account? <a href="#" id="register-link">Register here</a></p>
+                </form>
+                 <div id="login-error" class="error-message hidden"></div>
+            </div>
+        </section>
+
+        <!-- PROFESSOR DASHBOARD -->
+        <section id="professor-dashboard" class="view hidden">
+            <header class="dashboard-header">
+                <h1>Professor Dashboard</h1>
+                <button id="logout-btn">Logout</button>
+            </header>
+            <div class="dashboard-content">
+                <div class="card">
+                    <h2>Create a New Quiz</h2>
+                    <p>Choose a method to generate questions for your quiz.</p>
+                    <div class="button-group">
+                        <button class="creation-btn" data-method="manual">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83l3.75 3.75z"/></svg>
+                            Manual Entry
+                        </button>
+                        <button class="creation-btn" data-method="topic">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84l4-7l-4-7z"/></svg>
+                            AI by Topic
+                        </button>
+                        <button class="creation-btn" data-method="pdf">
+                           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m-8.5 7.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5s1.5.67 1.5 1.5m-3 4.5h3c.83 0 1.5-.67 1.5-1.5s-.67-1.5-1.5-1.5h-3c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5M18 15h-5v-2h5zm0-4h-5V9h5zm-2-4h-3V5h3zM4 6H2v14c0 1.1.9 2 2 2h14v-2H4z"/></svg>
+                            AI from PDF
+                        </button>
+                    </div>
+                </div>
+                <h2>My Quizzes</h2>
+                <div id="quiz-list" class="quiz-list-container">
+                    <!-- Quizzes will be dynamically inserted here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- STUDENT QUIZ SECTION -->
+        <section id="student-quiz-section" class="view hidden">
+            <div class="quiz-header">
+                <h2 id="quiz-title">Quiz Title</h2>
+                <div id="quiz-timer">--:--</div>
+            </div>
+            <div id="quiz-container" class="card">
+                <!-- Quiz content will be injected here -->
+            </div>
+            <div class="quiz-navigation">
+                <button id="prev-question-btn" class="hidden">Previous</button>
+                <button id="next-question-btn">Next</button>
+                <button id="submit-quiz-btn" class="hidden">Submit Quiz</button>
+            </div>
+        </section>
+
+        <!-- RESULTS SECTION -->
+        <section id="results-section" class="view hidden">
+            <!-- Content will be injected by JS -->
+        </section>
+        
+        <!-- MODAL FOR QUIZ CREATION -->
+        <div id="creation-modal" class="modal-overlay hidden">
+            <div class="modal-content">
+                <button id="close-modal-btn" class="close-btn">&times;</button>
+                <div id="modal-body">
+                    <!-- Content for quiz creation methods goes here -->
+                </div>
+                 <div id="modal-loader" class="hidden">
+                    <div class="loader"></div>
+                    <p id="loader-message">Generating questions...</p>
+                </div>
+                <div id="modal-error" class="error-message hidden"></div>
+            </div>
+        </div>
+
+        <!-- CONFIRMATION MODAL -->
+        <div id="confirmation-modal" class="modal-overlay hidden">
+            <div class="modal-content">
+                <h3>Confirm Submission</h3>
+                <p>Are you sure you want to submit your quiz? You will not be able to change your answers.</p>
+                <div class="confirmation-actions">
+                    <button id="cancel-submission-btn">Cancel</button>
+                    <button id="confirm-submission-btn">Submit</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>

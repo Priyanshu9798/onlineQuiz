@@ -1,0 +1,5 @@
+{
+  "name": "Online Quiz Platform",
+  "description": "A full-featured quiz platform for professors to create quizzes (manually or with AI) and for students to take them in a secure environment.",
+  "requestFramePermissions": []
+}
